@@ -52,9 +52,10 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun TipCalculatorLayout() {
     var amountInput by remember { mutableStateOf("") }
+    var amountTip by remember { mutableStateOf("") }
 
     val amount = amountInput.toDoubleOrNull() ?: 0.0
-    val tip = calculateTip(amount)
+    val tip = calculateTip(amount = amount, tipPercent = amountTip.toDoubleOrNull() ?: 15.0)
     Column(
         modifier = Modifier
             .statusBarsPadding()
@@ -69,7 +70,19 @@ fun TipCalculatorLayout() {
                 .padding(bottom = 16.dp, top = 40.dp)
                 .align(alignment = Alignment.Start)
         )
-        EditNumberField(value = amountInput, onValueChanged = {amountInput = it}, modifier = Modifier
+        EditNumberField(
+            value = amountInput,
+            onValueChanged = {amountInput = it},
+            labelText = R.string.bill_amount,
+            modifier = Modifier
+            .padding(bottom = 39.dp)
+            .fillMaxWidth())
+
+        EditNumberField(
+            value = amountTip,
+            onValueChanged = {amountTip = it},
+            labelText = R.string.tip_amount,
+            modifier = Modifier
             .padding(bottom = 25.dp)
             .fillMaxWidth())
         Text(
@@ -87,14 +100,14 @@ private fun calculateTip(amount: Double, tipPercent: Double = 15.0): String {
 
 @SuppressLint("UnrememberedMutableState")
 @Composable
-fun EditNumberField(value: String, onValueChanged: (String) -> Unit, modifier: Modifier = Modifier){
+fun EditNumberField(value: String, onValueChanged: (String) -> Unit, labelText: Int, modifier: Modifier = Modifier){
 
     TextField(
         value = value,
         singleLine = true,
         onValueChange = onValueChanged,
         modifier = modifier,
-        label = { Text(stringResource(R.string.bill_amount)) },
+        label = { Text(stringResource(labelText)) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
     )
 }
